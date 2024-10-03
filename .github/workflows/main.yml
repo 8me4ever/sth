@@ -1,41 +1,50 @@
-# 修改后的 build-macos.yml 文件
 name: Build macOS App
 
 on:
   push:
     branches:
-      - main
+      - main  # 当推送到 main 分支时触发
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: macos-latest  # 使用 GitHub 的最新 macOS Runner 进行构建
 
     steps:
+      # Step 1: 检出代码仓库内容
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # 更新 pip 到最新版本
-      - name: Upgrade pip to the latest version
+      # Step 2: 设置 Python 环境并手动更新 pip 到最新版本
+      - name: Set up Python environment and upgrade pip
         run: |
-          python -m pip install --upgrade pip  # 这一行是用于更新 pip
+          python3 -m pip install --upgrade pip  # 使用 python3 命令更新 pip
+          pip --version  # 确认 pip 版本已成功更新
 
+      # Step 3: 设置 Python 版本（指定具体版本以便与系统环境一致）
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: 3.8
 
+      # Step 4: 安装依赖项
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip  # 再次确认 pip 已是最新版本
-          pip install -r requirements.txt
-          pip install py2app
+          pip install --upgrade pip  # 再次确认 pip 是最新版本
+          pip install -r requirements.txt  # 安装项目依赖
+          pip install py2app  # 安装 py2app 打包工具
 
+      # Step 5: 构建 .app 文件
       - name: Build macOS App using py2app
         run: |
           python setup.py py2app
 
+      # Step 6: 上传打包结果为 Artifact，方便下载
       - name: Archive build result
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v3  # 使用 v3 版本
+        with:
+          name: mac-app
+          path: dist/
+
         with:
           name: mac-app
           path: dist/
