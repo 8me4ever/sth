@@ -7,40 +7,42 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest  # 使用 GitHub 的最新 macOS Runner 进行构建
+    runs-on: macos-latest
 
     steps:
-      # Step 1: 检出代码仓库内容
+      # 检查代码
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Step 2: 设置 Python 环境并手动更新 pip 到最新版本
-      - name: Set up Python environment and upgrade pip
+      # 创建并激活虚拟环境
+      - name: Set up Python virtual environment
         run: |
-          python3 -m pip install --upgrade pip  # 使用 python3 命令更新 pip
-          pip --version  # 确认 pip 版本已成功更新
+          python3 -m venv venv  # 创建虚拟环境
+          source venv/bin/activate  # 激活虚拟环境
 
-      # Step 3: 设置 Python 版本（指定具体版本以便与系统环境一致）
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.8
+      # 确认虚拟环境已激活并升级 pip
+      - name: Upgrade pip in virtual environment
+        run: |
+          source venv/bin/activate
+          python3 -m pip install --upgrade pip  # 升级 pip
+          pip --version  # 输出 pip 版本信息
 
-      # Step 4: 安装依赖项
+      # 安装依赖项（在虚拟环境中）
       - name: Install dependencies
         run: |
-          pip install --upgrade pip  # 再次确认 pip 是最新版本
-          pip install -r requirements.txt  # 安装项目依赖
-          pip install py2app  # 安装 py2app 打包工具
+          source venv/bin/activate
+          pip install -r requirements.txt
+          pip install py2app
 
-      # Step 5: 构建 .app 文件
+      # 使用 py2app 打包应用程序（在虚拟环境中）
       - name: Build macOS App using py2app
         run: |
+          source venv/bin/activate
           python setup.py py2app
 
-      # Step 6: 上传打包结果为 Artifact，方便下载
+      # 上传打包结果
       - name: Archive build result
-        uses: actions/upload-artifact@v3  # 使用 v3 版本
+        uses: actions/upload-artifact@v3
         with:
           name: mac-app
           path: dist/
