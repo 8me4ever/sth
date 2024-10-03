@@ -1,12 +1,12 @@
 from setuptools import setup
 
-APP = ['main.py']  # 你的主入口文件
-DATA_FILES = []  # 如果有额外的资源文件，可以在这里添加
+APP = ['main.py']
+DATA_FILES = []
 OPTIONS = {
-    'argv_emulation': True,  # 启用命令行参数模拟
+    'argv_emulation': True,
     'packages': ['pandas', 'tkinter', 'openpyxl', 'matplotlib'],
-    'includes': ['PyInstaller.hooks.hook-gi.repository.GstWebRTC'],  # 显式包含缺失的模块
-    # 'iconfile': 'icon.icns',  # 如果没有 icns 文件，可以注释掉该行
+    'includes': ['PyQt5', 'PyQt5.QtQml', 'PyQt5.QtCore', 'PyQt5.QtGui', 'PyQt5.QtWidgets'],
+    'hookspath': ['./hooks'],  # 指定自定义 hook 文件路径
 }
 
 setup(
