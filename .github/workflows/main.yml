@@ -44,7 +44,3 @@ jobs:
         with:
           name: mac-app
           path: dist/
-
-        with:
-          name: mac-app
-          path: dist/
